@@ -1,46 +1,132 @@
-# Getting Started with Create React App
+# AI Chat Application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is an AI-powered chat application built with [Next.js](https://nextjs.org) and the [Vercel AI SDK](https://sdk.vercel.ai/docs).
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- 🤖 Real-time AI chat interface
+- 💬 Streaming responses using Vercel AI SDK
+- 🎨 Modern, responsive UI with Tailwind CSS
+- ⚡ Built with Next.js 16 and React 19
+- 🔄 Server-side streaming for optimal performance
 
-### `npm start`
+## Prerequisites
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- Node.js 20.9.0 or higher (recommended)
+- npm, yarn, pnpm, or bun
+- OpenAI API key (get one at [https://platform.openai.com/api-keys](https://platform.openai.com/api-keys))
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Getting Started
 
-### `npm test`
+### 1. Install Dependencies
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+npm install
+```
 
-### `npm run build`
+### 2. Set Up Environment Variables
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Create a `.env.local` file in the root directory and add your OpenAI API key:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```bash
+OPENAI_API_KEY=your-openai-api-key-here
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+You can get your API key from [OpenAI's platform](https://platform.openai.com/api-keys).
 
-### `npm run eject`
+### 3. Run the Development Server
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```bash
+npm run dev
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Open [http://localhost:3000](http://localhost:3000) with your browser to start chatting with the AI.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Project Structure
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```
+ai-sdk/
+├── app/
+│   ├── api/
+│   │   └── chat/
+│   │       └── route.ts      # AI chat API endpoint
+│   ├── layout.tsx            # Root layout
+│   ├── page.tsx              # Main chat interface
+│   └── globals.css           # Global styles
+├── .env.local                # Environment variables (create this)
+└── package.json
+```
+
+## Technology Stack
+
+- **Framework:** Next.js 16 (App Router)
+- **AI SDK:** Vercel AI SDK (`ai`, `@ai-sdk/react`, `@ai-sdk/openai`)
+- **Styling:** Tailwind CSS 4
+- **Language:** TypeScript
+- **AI Provider:** OpenAI GPT-4 Turbo
+
+## Customization
+
+### Change AI Model
+
+Edit `app/api/chat/route.ts` to use a different model:
+
+```typescript
+const result = streamText({
+  model: openai('gpt-3.5-turbo'), // or gpt-4, gpt-4o, etc.
+  messages,
+  system: 'You are a helpful AI assistant.',
+});
+```
+
+### Modify System Prompt
+
+Update the `system` parameter in `app/api/chat/route.ts`:
+
+```typescript
+system: 'Your custom system prompt here.',
+```
+
+### Use Different AI Providers
+
+The Vercel AI SDK supports multiple providers. To use a different provider:
+
+```bash
+# Install the provider
+npm install @ai-sdk/anthropic  # for Anthropic Claude
+# or
+npm install @ai-sdk/google     # for Google Gemini
+```
+
+Then update the import and model in `route.ts`:
+
+```typescript
+import { anthropic } from '@ai-sdk/anthropic';
+
+const result = streamText({
+  model: anthropic('claude-3-5-sonnet-20241022'),
+  // ...
+});
+```
 
 ## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- [Vercel AI SDK Documentation](https://sdk.vercel.ai/docs)
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [OpenAI API Documentation](https://platform.openai.com/docs)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new):
+
+1. Push your code to a Git repository (GitHub, GitLab, or Bitbucket)
+2. Import your repository on Vercel
+3. Add your `OPENAI_API_KEY` environment variable in the Vercel dashboard
+4. Deploy!
+
+Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## License
+
+MIT
