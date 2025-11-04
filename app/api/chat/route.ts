@@ -1,5 +1,6 @@
 import { openai } from '@ai-sdk/openai';
-import { streamText, UIMessage, convertToModelMessages } from 'ai';
+import { streamText, UIMessage, convertToModelMessages, tool } from 'ai';
+import z from 'zod';
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
@@ -14,6 +15,7 @@ export const maxDuration = 30;
  * @returns A streaming response with the AI-generated message
  */
 export async function POST(req: Request) {
+  console.log('🚀 ===== CHAT API CALLED =====');
   // Extract messages from the request body
   // The messages variable contains the entire conversation history between
   // the user and the chatbot. Each message is of type UIMessage, which includes:
@@ -25,6 +27,8 @@ export async function POST(req: Request) {
   // This conversation history provides the chatbot with the necessary context
   // to generate contextually relevant responses.
   const { messages }: { messages: UIMessage[] } = await req.json();
+  console.log('📨 Total messages:', messages.length);
+  console.log('💬 Last user message:', messages[messages.length - 1]?.parts?.[0]?.text || 'N/A');
 
   // Convert UIMessages to ModelMessages
   // UIMessage[] contains UI-specific metadata (timestamps, sender info, parts structure)
@@ -49,6 +53,51 @@ export async function POST(req: Request) {
     // temperature: 0.7,
     // maxTokens: 2000,
     // topP: 1,
+    tools: {
+      'movie-studio-assistant': tool({
+        description: 'Do production assistant operations like budget queries, scheduling conflicts, and project info lookups.',
+        inputSchema: z.object({
+          location: z.string().describe('The movie project data'),
+        }),
+        execute: async ({ location }) => {
+          console.log('🔧 TOOL CALLED: movie-studio-assistant');
+          console.log('📍 Input location:', location);
+          const csvData = await loadCsv();
+          console.log('✅ CSV data loaded, length:', csvData.length);
+
+          return {
+            location,
+            csvData,
+          };
+        },
+        onStepFinish: ({ toolCalls, toolResults }) => {
+          console.log('🎯 ===== onStepFinish TRIGGERED =====');
+          console.log('📊 Number of tool calls:', toolCalls.length);
+          console.log('📦 Tool calls:', toolCalls);
+          console.log('📦 Tool results:', toolResults);
+          
+          // Type-safe iteration
+          for (const toolCall of toolCalls) {
+            if (toolCall.dynamic) {
+              // Dynamic tool: input is 'unknown'
+              console.log('🔄 Dynamic tool:', toolCall.toolName, toolCall.input);
+              continue;
+            }
+      
+            // Static tool: full type inference
+            console.log('⚙️ Static tool called:', toolCall.toolName);
+            switch (toolCall.toolName) {
+              case 'movie-studio-assistant':
+                console.log('🎬 Movie studio location:', toolCall.input.location);
+                break;
+              case 'weather':
+                console.log('🌤️ Weather location:', toolCall.input.location);
+                break;
+            }
+          }
+        },
+      }),
+    },
   });
 
   // The StreamTextResult object contains several methods for handling the response:
@@ -61,5 +110,12 @@ export async function POST(req: Request) {
   // - Streaming body containing UIMessage chunks
   // - Proper headers for streaming (Content-Type, Transfer-Encoding)
   // - Format compatible with @ai-sdk/react hooks (useChat)
+  console.log('✨ Returning streaming response...');
   return result.toUIMessageStreamResponse();
+}
+
+async function loadCsv() {
+  const csv = await fetch('https://raw.githubusercontent.com/Omerisra6/editor-assistants-workshop/refs/heads/main/assitants/movie-studio/production-schedule.csv');
+  const text = await csv.text();
+  return text;
 }

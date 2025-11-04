@@ -1,0 +1,14 @@
+[00:00:01.798] Server  LOG      ✓ Ready in 1487ms
+[00:00:04.319] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:01:52.861] Server  LOG     tskdjhksjdkfcj;sdlckvjs
+[00:04:15.250] Server  LOG     🚀 ===== CHAT API CALLED =====
+[00:04:15.252] Server  LOG     📨 Total messages: 5
+[00:04:15.252] Server  LOG     💬 Last user message: "Justice League"
+[00:04:17.417] Server  LOG     🔧 TOOL CALLED: movie-studio-assistant
+[00:04:17.418] Server  LOG     📍 Input location: "Justice League"
+[00:04:17.649] Server  LOG     ✅ CSV data loaded, length: 1442
+[00:04:41.752] Server  LOG     🚀 ===== CHAT API CALLED =====
+[00:04:41.752] Server  LOG     📨 Total messages: 7
+[00:04:41.753] Server  LOG     💬 Last user message: "???"
+[00:04:41.760] Server  LOG     ✨ Returning streaming response...
+[00:04:54.473] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
